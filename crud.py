@@ -1,3 +1,5 @@
+import json, os, csv
+
 f_name = 'data.json'
 
 def clear():
