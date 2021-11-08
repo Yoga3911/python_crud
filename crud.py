@@ -1,23 +1,21 @@
 import json, os, csv
 
+os.system('clear')
+
 f_name = 'data.json'
 
 def clear():
-    os.system('clear')
+    os.system('cls')
 
-# Main Menu
 def menu():
     clear()
-    print(
-'''     === CRUD ===
-
-1. Tambah Mahasiswa
-2. Lihat Data Mahasiswa
-3. Perbarui Data Mahasiswa
-4. Hapus Data Mahasiswa
+    print('''=== Mahasiswa Unej ===    
+1. Tambah data mahasiswa
+2. Lihat data mahasiswa
+3. Update data mahasiswa
+4. Hapus data mahasiswa
 5. Exit
-'''
-    )
+''')
     tanya = input('Pilih menu: ')
     if tanya == '1':
         create()
@@ -30,95 +28,127 @@ def menu():
     elif tanya == '5':
         exit()
 
-def load():
-    with open(f_name, 'r') as data:
-            reader = json.load(data)
-            return reader
+def create():
+    clear()
+    print('=== Tambah Mahasiswa ===')
+    tmp, mhs = [], {}
 
-def dump(tmp):
+    try:
+        with open(f_name, 'r') as data:
+            reader = json.load(data)
+            tmp = reader
+    except:
+        pass
+
+    mhs['nama'] = input('Masukkan nama: ')
+    mhs['nim'] = input('Masukkan nim: ')
+    tmp.append(mhs)
+
     with open(f_name, 'w') as data:
         writer = json.dump(tmp, data, indent=4)
 
-# Create
-def create():
-    clear()
-    print('=== Tambah Mahasiswwa ===\n')
-    tmp, mhs = [], {}
-    try:
-        get = load()
-        tmp = get
-    except:
-        pass
-    mhs['nama'] = input('Masukkan nama: ')
-    mhs['nim'] = input('Masukkan NIM: ')
-    tmp.append(mhs)
-    dump(tmp)
-    input('\nEnter untuk kembali')
-
-# Read
-def core():
-    get = load()
-    print('='*40)
-    print(f"{'No':^2} {'Nama':^16} {'NIM':^12}")
-    print('='*40)
-    for i, item in enumerate(get, start=1):
-        print(f"{i:^2} {item['nama']:^15} {item['nim']:^15}")
-    print('='*40)
+    input('Enter untuk kembali')
 
 def read():
     clear()
-    print('=== Data Mahasiswwa ===\n')
-    core()
-    input('\nEnter untuk kembali')
+    print('=== Data Mahasiswa ===')
 
-# Update
-def update():
-    clear()
-    print('=== Update Data ===\n')
-    core()
-    get = load()
-    tanya_update = input('Mahasiswa yang ingin diupdate: ')
-    for index, item in enumerate(get):
-        if tanya_update == item['nama']:
-            tmp = item
-            index_mhs = index
-    while True:
-        clear()
-        print('='*40)
-        print(f"{'Nama':^16} {'NIM':^12}")
-        print('='*40)
-        for item in tmp.values():
-            print(f"{item:^15}", end='')
-        print()
-        print('='*40)
-        print('1. Nama\n2. NIM\n0. Selesai')
-        tanya = input('Data yang ingin diupdate: ')
-        if tanya == '0':
-            break
-        elif tanya == '1':
-            tmp['nama'] = input('Masukkan nama: ')
-        elif tanya == '2':
-            tmp['nim'] = input('Masukkan nim: ')
-    yakin = input('Apakah anda yakin ingin mengubah data ini? [y/n] ')
-    if yakin == 'y':
-        get[index_mhs] = tmp
-        dump(get)
+    try:
+        with open(f_name, 'r') as data:
+            reader = json.load(data)
+    except:
+        print('File tidak ada')
+        input('Enter untuk kembali')
+        menu()
+
+    print('='*35)
+    print(f"{'No.':^3} {'Nama':^15} {'NIM':^12}")
+    print('='*35)
+    for index, i in enumerate(reader, start=1):
+        print(f"{index:^3} {i['nama']:^15} {i['nim']:^12}")
+    print('='*35)
     input('Enter untuk kembali')
 
-# Delete
 def delete():
     clear()
-    print('=== Hapus Mahasiswwa ===\n')
-    core()
-    get = load()
-    tanya = input('Masukkan nama mahasiswa: ')
-    for i, item in enumerate(get):
-        if tanya == item['nama']:
-            get.pop(i)
-    yakin = input('Apakah anda yakin ingin mengubah data ini? [y/n] ')
+    print('=== Hapus Mahasiswa ===')
+
+    try:
+        with open(f_name, 'r') as data:
+            reader = json.load(data)
+    except:
+        print('File tidak ada')
+        input('Enter untuk kembali')
+        menu()
+    
+    print('='*35)
+    print(f"{'No.':^3} {'Nama':^15} {'NIM':^12}")
+    print('='*35)
+    for index, i in enumerate(reader, start=1):
+        print(f"{index:^3} {i['nama']:^15} {i['nim']:^12}")
+    print('='*35)
+    
+    tanya = int(input('Index mahasiswa: '))
+    for index, i in enumerate(reader, start=1):
+        if index == tanya:
+            yakin = input('apakah anda yakin: [y/n] ')
+            if yakin == 'y':
+                reader.pop(index - 1)
+                with open(f_name, 'w') as data:
+                    writer = json.dump(reader, data, indent=4)
+    input('Enter untuk kembali')
+
+def update():
+    clear()
+    print('=== Update Data ===')
+
+    try:
+        with open(f_name, 'r') as data:
+            reader = json.load(data)
+    except:
+        print('File tidak ada')
+        input('Enter untuk kembali')
+        menu()
+    
+    print('='*35)
+    print(f"{'No.':^3} {'Nama':^15} {'NIM':^12}")
+    print('='*35)
+    for index, i in enumerate(reader, start=1):
+        print(f"{index:^3} {i['nama']:^15} {i['nim']:^12}")
+    print('='*35)
+
+    tmp = []
+    tanya = input('No mahasiswa: ')
+    for index, i in enumerate(reader, start=1):
+        if int(tanya) == index:
+            tmp = i
+            ind = index
+
+    while True:
+        clear()
+        print('='*35)
+        print(f"{'Nama':^15} {'NIM':^12}")
+        print('='*35)
+        for i in tmp.values():
+            print(f"{i:^15}", end='')
+        print()
+        print('='*35)
+        print('1. Nama\n2. NIM\n0. Simpan')
+        ubah = input('Data yang ingin diubah: ')
+        if ubah == '1':
+            tmp['nama'] = input('Masukkan nama: ')
+        elif ubah == '2':
+            tmp['nim'] = input('Masukkan nim: ')
+        elif ubah == '0':
+            break
+    yakin = input('apakah anda yakin? [y/n] ')
     if yakin == 'y':
-        dump(get)
-    input('\nEnter untuk kembali') 
+        clear()
+        print('Data berhasil diubah')
+        reader[ind - 1] = tmp
+        with open(f_name, 'w') as data:
+            writer = json.dump(reader, data, indent=4)
+    input('Enter untuk kembali')
 
 while True:
     menu()
